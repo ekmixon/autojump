@@ -41,8 +41,8 @@ class TestMatchAnywhere(object):
 
     def test_consecutive(self, haystack):
         assert list(match_anywhere(['foo', 'bar'], haystack)) \
-            == [self.entry1, self.entry2]
-        assert list(match_anywhere(['bar', 'foo'], haystack)) == []
+                == [self.entry1, self.entry2]
+        assert not list(match_anywhere(['bar', 'foo'], haystack))
 
     def test_skip(self, haystack):
         assert list(match_anywhere(['baz', 'bar'], haystack)) == [self.entry2]
@@ -63,7 +63,7 @@ class TestMatchAnywhere(object):
 
     def test_wildcard_in_needle(self, haystack):
         # https://github.com/wting/autojump/issues/402
-        assert list(match_anywhere(['*', 'this'], haystack)) == []
+        assert not list(match_anywhere(['*', 'this'], haystack))
         assert list(match_anywhere(['this', '*'], haystack)) == [self.entry5]
 
 
@@ -101,7 +101,7 @@ class TestMatchConsecutive(object):
         assert list(match_consecutive(['bar', 'baz'], haystack)) == [self.entry1]
         assert list(match_consecutive(['foo', 'bar'], haystack)) == [self.entry2]
         assert list(match_consecutive(['国', 'guo'], haystack)) == [self.entry4]
-        assert list(match_consecutive(['bar', 'foo'], haystack)) == []
+        assert not list(match_consecutive(['bar', 'foo'], haystack))
 
     def test_ignore_case(self, haystack):
         assert list(match_consecutive(['FoO', 'bAR'], haystack, ignore_case=True)) \
@@ -127,5 +127,5 @@ class TestMatchConsecutive(object):
 
     @pytest.mark.xfail(reason='https://github.com/wting/autojump/issues/402')
     def test_wildcard_in_needle(self, haystack):
-        assert list(match_consecutive(['*', 'this'], haystack)) == []
+        assert not list(match_consecutive(['*', 'this'], haystack))
         assert list(match_consecutive(['*', 'edge', 'case'], haystack)) == [self.entry6]

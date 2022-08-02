@@ -15,10 +15,7 @@ def is_empty_dir(path):
     """
     Checks if any files are present within a directory and all sub-directories.
     """
-    for _, _, files in os.walk(path):
-        if files:
-            return False
-    return True
+    return not any(files for _, _, files in os.walk(path))
 
 
 def parse_arguments():

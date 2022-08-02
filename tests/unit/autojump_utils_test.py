@@ -88,8 +88,8 @@ def test_sanitize():
 
 @pytest.mark.skipif(is_python3(), reason='Unicode sucks.')
 def test_unico():
-    assert unico(str('blah')) == u('blah')
-    assert unico(str('日本語')) == u('日本語')
+    assert unico('blah') == u('blah')
+    assert unico('日本語') == u('日本語')
     assert unico(u('でもおれは中国人だ。')) == u('でもおれは中国人だ。')
 
 
@@ -113,7 +113,7 @@ def test_take():
     assert list(take(1, xrange(3))) == [0]
     assert list(take(2, xrange(3))) == [0, 1]
     assert list(take(4, xrange(3))) == [0, 1, 2]
-    assert list(take(10, [])) == []
+    assert not list(take(10, []))
 
 
 # environment variables
@@ -122,7 +122,7 @@ def test_in_bash():
         os.environ['SHELL'] = path
         assert in_bash()
 
-    for path in ['/bin/zsh', '/usr/bin/zsh']:
+    for _ in ['/bin/zsh', '/usr/bin/zsh']:
         os.environ['SHELL'] = '/usr/bin/zsh'
         assert not in_bash()
 

@@ -72,8 +72,6 @@ TAB_SEPARATOR = '__'
 
 
 def set_defaults():
-    config = {}
-
     if is_osx():
         data_home = os.path.join(os.path.expanduser('~'), 'Library')
     elif is_windows():
@@ -87,7 +85,7 @@ def set_defaults():
                 'share',
             ),
         )
-    config['data_path'] = os.path.join(data_home, 'autojump', 'autojump.txt')
+    config = {'data_path': os.path.join(data_home, 'autojump', 'autojump.txt')}
     config['backup_path'] = os.path.join(data_home, 'autojump', 'autojump.txt.bak')
 
     return config

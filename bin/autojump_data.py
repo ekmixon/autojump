@@ -35,10 +35,7 @@ def dictify(entries):
         key = path
         value = weight
     """
-    result = {}
-    for entry in entries:
-        result[entry.path] = entry.weight
-    return result
+    return {entry.path: entry.weight for entry in entries}
 
 
 def entriefy(data):

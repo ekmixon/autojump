@@ -37,9 +37,7 @@ def encode_local(string):
 def first(xs):
     it = iter(xs)
     try:
-        if is_python3():
-            return it.__next__()
-        return it.next()
+        return it.__next__() if is_python3() else it.next()
     except StopIteration:
         return None
 
@@ -52,7 +50,7 @@ def get_tab_entry_info(entry, separator):
     """
     needle, index, path = None, None, None
 
-    match_needle = re.search(r'(.*?)' + separator, entry)
+    match_needle = re.search(f'(.*?){separator}', entry)
     match_index = re.search(separator + r'([0-9]{1})', entry)
     match_path = re.search(
         separator + r'[0-9]{1}' + separator + r'(.*)',
@@ -60,13 +58,13 @@ def get_tab_entry_info(entry, separator):
     )
 
     if match_needle:
-        needle = match_needle.group(1)
+        needle = match_needle[1]
 
     if match_index:
-        index = int(match_index.group(1))
+        index = int(match_index[1])
 
     if match_path:
-        path = match_path.group(1)
+        path = match_path[1]
 
     return needle, index, path
 
@@ -90,7 +88,7 @@ def in_bash():
 
 
 def is_autojump_sourced():
-    return '1' == os.getenv('AUTOJUMP_SOURCED')
+    return os.getenv('AUTOJUMP_SOURCED') == '1'
 
 
 def is_python2():
@@ -193,10 +191,7 @@ def surround_quotes(string):
     Bash has problems dealing with certain paths so we're surrounding all
     path outputs with quotes.
     """
-    if in_bash() and string:
-        # Python 2.6 requres field numbers
-        return '"{0}"'.format(string)
-    return string
+    return '"{0}"'.format(string) if in_bash() and string else string
 
 
 def take(n, iterable):

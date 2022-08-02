@@ -25,14 +25,16 @@ ip = get_ipython()  # noqa
 @register_line_magic
 def j(path):
     cmd = ['autojump'] + path.split()
-    newpath = Popen(
-        cmd,
-        stdout=PIPE,
-        shell=False,
-    ).communicate()[0].strip()
-
-    if newpath:
-        ip.magic('cd %s' % newpath.decode('utf-8'))
+    if (
+        newpath := Popen(
+            cmd,
+            stdout=PIPE,
+            shell=False,
+        )
+        .communicate()[0]
+        .strip()
+    ):
+        ip.magic(f"cd {newpath.decode('utf-8')}")
 
 
 # remove from namespace

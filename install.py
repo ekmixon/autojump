@@ -14,7 +14,7 @@ SUPPORTED_SHELLS = ('bash', 'zsh', 'fish', 'tcsh')
 
 
 def cp(src, dest, dryrun=False):
-    print('copying file: %s -> %s' % (src, dest))
+    print(f'copying file: {src} -> {dest}')
     if not dryrun:
         shutil.copy(src, dest)
 
@@ -67,9 +67,6 @@ def parse_arguments():  # noqa
         )
     default_user_prefix = ''
     default_user_zshshare = 'functions'
-    default_system_destdir = '/'
-    default_system_prefix = '/usr/local'
-    default_system_zshshare = '/usr/share/zsh/site-functions'
     default_clink_dir = os.path.join(os.getenv('LOCALAPPDATA', ''), 'clink')
 
     parser = ArgumentParser(
@@ -127,18 +124,14 @@ def parse_arguments():  # noqa
 
         if platform.system() != 'Windows' \
                 and get_shell() not in SUPPORTED_SHELLS:
-            print(
-                'Unsupported shell: %s' % os.getenv('SHELL'),
-                file=sys.stderr,
-            )
+            print(f"Unsupported shell: {os.getenv('SHELL')}", file=sys.stderr)
             sys.exit(1)
 
-    if args.destdir != default_user_destdir \
-            or args.prefix != default_user_prefix \
-            or args.zshshare != default_user_zshshare:
-        args.custom_install = True
-    else:
-        args.custom_install = False
+    args.custom_install = (
+        args.destdir != default_user_destdir
+        or args.prefix != default_user_prefix
+        or args.zshshare != default_user_zshshare
+    )
 
     if args.system:
         if args.custom_install:
@@ -148,8 +141,11 @@ def parse_arguments():  # noqa
             )
             sys.exit(1)
 
+        default_system_destdir = '/'
         args.destdir = default_system_destdir
+        default_system_prefix = '/usr/local'
         args.prefix = default_system_prefix
+        default_system_zshshare = '/usr/share/zsh/site-functions'
         args.zshshare = default_system_zshshare
 
     return args
@@ -160,17 +156,17 @@ def show_post_installation_message(etc_dir, share_dir, bin_dir):
         print('\nPlease manually add %s to your user path' % bin_dir)
     else:
         if get_shell() == 'fish':
-            aj_shell = '%s/autojump.fish' % share_dir
-            source_msg = 'if test -f %s; . %s; end' % (aj_shell, aj_shell)
+            aj_shell = f'{share_dir}/autojump.fish'
+            source_msg = f'if test -f {aj_shell}; . {aj_shell}; end'
             rcfile = '~/.config/fish/config.fish'
         else:
-            aj_shell = '%s/autojump.sh' % etc_dir
-            source_msg = '[[ -s %s ]] && source %s' % (aj_shell, aj_shell)
+            aj_shell = f'{etc_dir}/autojump.sh'
+            source_msg = f'[[ -s {aj_shell} ]] && source {aj_shell}'
 
             if platform.system() == 'Darwin' and get_shell() == 'bash':
                 rcfile = '~/.profile'
             else:
-                rcfile = '~/.%src' % get_shell()
+                rcfile = f'~/.{get_shell()}rc'
 
         print('\nPlease manually add the following line(s) to %s:' % rcfile)
         print('\n\t' + source_msg)
@@ -182,9 +178,9 @@ def show_post_installation_message(etc_dir, share_dir, bin_dir):
 
 def main(args):
     if args.dryrun:
-        print('Installing autojump to %s (DRYRUN)...' % args.destdir)
+        print(f'Installing autojump to {args.destdir} (DRYRUN)...')
     else:
-        print('Installing autojump to %s ...' % args.destdir)
+        print(f'Installing autojump to {args.destdir} ...')
 
     bin_dir = os.path.join(args.destdir, args.prefix, 'bin')
     etc_dir = os.path.join(args.destdir, 'etc', 'profile.d')
